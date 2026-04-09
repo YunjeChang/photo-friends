@@ -1,0 +1,19 @@
+package com.example.photo_app.dto;
+
+import lombok.Builder;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Builder
+public class PhotoResponse {
+
+    private Long id;
+    private String imageUrl;
+    private String caption;
+    private Long userId;
+    private String username;
+    private LocalDateTime createdAt;
+
+}

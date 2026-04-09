@@ -1,6 +1,7 @@
 package com.example.photo_app.controller;
 
 import com.example.photo_app.dto.CommentRequest;
+import com.example.photo_app.dto.CommentResponse;
 import com.example.photo_app.entity.Comment;
 import com.example.photo_app.service.CommentService;
 import lombok.AllArgsConstructor;
@@ -16,17 +17,17 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public Comment createComment(@RequestBody CommentRequest request){
+    public CommentResponse createComment(@RequestBody CommentRequest request){
         return commentService.createComment(request);
     }
 
     @GetMapping("/photo/{photoId}")
-    public List<Comment> getCommentsByPhoto(@PathVariable Long photoId){
+    public List<CommentResponse> getCommentsByPhoto(@PathVariable Long photoId){
         return commentService.getCommentsByPhoto(photoId);
     }
 
     @GetMapping("/photo")
-    public List<Comment> getAllComments(){
+    public List<CommentResponse> getAllComments(){
         return commentService.getAllComments();
     }
 

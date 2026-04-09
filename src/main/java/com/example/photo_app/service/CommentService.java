@@ -1,6 +1,7 @@
 package com.example.photo_app.service;
 
 import com.example.photo_app.dto.CommentRequest;
+import com.example.photo_app.dto.CommentResponse;
 import com.example.photo_app.entity.Comment;
 import com.example.photo_app.entity.Photo;
 import com.example.photo_app.entity.User;
@@ -20,7 +21,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final PhotoRepository photoRepository;
 
-    public Comment createComment(CommentRequest request){
+    public CommentResponse createComment(CommentRequest request){
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -33,11 +34,17 @@ public class CommentService {
                 .photo(photo)
                 .build();
 
-        return commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
+
+        return toResponse(savedComment);
     }
 
-    public List<Comment>getCommentsByPhoto(Long photoId){
-        return commentRepository.findByPhotoId(photoId);
+    public List<CommentResponse>getCommentsByPhoto(Long photoId){
+        List<Comment> comments = commentRepository.findByPhotoId(photoId);
+
+        return comments.stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     public void deleteComment(Long commentId){
@@ -47,8 +54,21 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
-    public List<Comment> getAllComments() {
+    public List<CommentResponse> getAllComments() {
         List<Comment> comments = commentRepository.findAll();
-        return comments;
+        return comments.stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private CommentResponse toResponse(Comment comment){
+        return CommentResponse.builder()
+                .id(comment.getId())
+                .content(comment.getContent())
+                .userId(comment.getUser().getId())
+                .username(comment.getUser().getUsername())
+                .photoId(comment.getPhoto().getId())
+                .createdAt(comment.getCreatedAt())
+                .build();
     }
 }
