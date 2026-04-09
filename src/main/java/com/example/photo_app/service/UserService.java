@@ -1,5 +1,6 @@
 package com.example.photo_app.service;
 
+import com.example.photo_app.dto.UserResponse;
 import com.example.photo_app.dto.UserSignupRequest;
 import com.example.photo_app.entity.User;
 import com.example.photo_app.repository.UserRepository;
@@ -14,7 +15,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public User signup(UserSignupRequest request){
+    public UserResponse signup(UserSignupRequest request){
 
         userRepository.findByUsername(request.getUsername())
                 .ifPresent(u -> {
@@ -32,16 +33,19 @@ public class UserService {
                 .password(request.getPassword())
                 .build();
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        return toResponse(savedUser);
 
     }
 
-    public List<User> getAllUser(){
-        return userRepository.findAll();
-    }
-
-    public void deleteUser(Long userId){
-        userRepository.deleteById(userId);
+    private UserResponse toResponse(User user){
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .profileImageUrl(user.getProfileImageUrl())
+                .build();
     }
 
 }
