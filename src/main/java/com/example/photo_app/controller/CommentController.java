@@ -2,7 +2,6 @@ package com.example.photo_app.controller;
 
 import com.example.photo_app.dto.CommentRequest;
 import com.example.photo_app.dto.CommentResponse;
-import com.example.photo_app.entity.Comment;
 import com.example.photo_app.service.CommentService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;

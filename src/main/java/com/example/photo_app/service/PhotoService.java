@@ -1,6 +1,7 @@
 package com.example.photo_app.service;
 
 import com.example.photo_app.dto.PhotoRequest;
+import com.example.photo_app.dto.PhotoResponse;
 import com.example.photo_app.entity.Photo;
 import com.example.photo_app.entity.User;
 import com.example.photo_app.repository.PhotoRepository;
@@ -17,7 +18,7 @@ public class PhotoService {
     private final PhotoRepository photoRepository;
     private final UserRepository userRepository;
 
-    public Photo createdPhoto(PhotoRequest request){
+    public PhotoResponse createdPhoto(PhotoRequest request){
 
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -28,19 +29,43 @@ public class PhotoService {
                 .user(user)
                 .build();
 
-        return photoRepository.save(photo);
+        Photo savedPhoto = photoRepository.save(photo);
+
+        return toResponse(savedPhoto);
     }
 
-    public List<Photo> getAllPhotos(){
-        return photoRepository.findAll();
+    public List<PhotoResponse> getAllPhotos(){
+        List<Photo> photos = photoRepository.findAll();
+
+        return photos.stream()
+                .map(this::toResponse)
+                .toList();
     }
 
-    public List<Photo> getPhotosByUser(Long userId){
-        return photoRepository.findByUserId(userId);
+    public List<PhotoResponse> getPhotosByUser(Long userId){
+        List<Photo> photos = photoRepository.findByUserId(userId);
+
+        return photos.stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     public void deletePhoto(Long photoId){
-        photoRepository.deleteById(photoId);
+        Photo photo = photoRepository.findById(photoId)
+                .orElseThrow(() -> new RuntimeException("Photo not found"));
+
+        photoRepository.delete(photo);
+    }
+
+    private PhotoResponse toResponse(Photo photo){
+        return PhotoResponse.builder()
+                .id(photo.getId())
+                .imageUrl(photo.getImageUrl())
+                .caption(photo.getCaption())
+                .userId(photo.getUser().getId())
+                .username(photo.getUser().getUsername())
+                .createdAt(photo.getCreatedAt())
+                .build();
     }
 
 }
