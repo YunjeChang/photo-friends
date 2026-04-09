@@ -1,5 +1,6 @@
 package com.example.photo_app.controller;
 
+import com.example.photo_app.dto.PhotoDetailResponse;
 import com.example.photo_app.dto.PhotoRequest;
 import com.example.photo_app.dto.PhotoResponse;
 import com.example.photo_app.service.PhotoService;
@@ -23,6 +24,11 @@ public class PhotoController {
     @GetMapping
     public List<PhotoResponse> getAllPhotos() {
         return photoService.getAllPhotos();
+    }
+
+    @GetMapping("/{photoId}")
+    public PhotoDetailResponse getPhotoDetail(@PathVariable Long photoId){
+        return photoService.getPhotoDetail(photoId);
     }
 
     @GetMapping("/user/{userId}")
